@@ -1,12 +1,18 @@
 public class DreamService
 {
+    private readonly JsonDatabase _jsonDatabase;
     private readonly List<Dream> _dreams;
 
     private int nextId = 1;
 
-    public DreamService()
+    public DreamService(JsonDatabase jsonDatabase)
     {
-        _dreams = new List<Dream>();
+        _jsonDatabase = jsonDatabase;
+        _dreams = _jsonDatabase.Load<Dream>();
+        if (_dreams.Count > 0)
+        {
+            nextId = _dreams.Max(d => d.Id) + 1;
+        }
     }
 
     private void ValidateDream(Dream dream)
@@ -27,6 +33,7 @@ public class DreamService
 
         dream.Id = nextId++;
         _dreams.Add(dream);
+        _jsonDatabase.Save(_dreams);
     }
 
     public List<Dream> GetAllDreams()
@@ -50,6 +57,7 @@ public class DreamService
             existingDream.Description = updatedDream.Description;
             existingDream.Date = updatedDream.Date;
             existingDream.LucidityLevel = updatedDream.LucidityLevel;
+            _jsonDatabase.Save(_dreams);
             return true;
         }
         return false;
@@ -61,7 +69,9 @@ public class DreamService
         if (dreamToRemove != null)
         {
             _dreams.Remove(dreamToRemove);
+            _jsonDatabase.Save(_dreams);
             return true;
+            
         }
         return false;
     }

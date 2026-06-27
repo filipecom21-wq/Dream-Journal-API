@@ -1,102 +1,97 @@
 # Dream Journal API
 
-API REST desenvolvida em ASP.NET Core para registrar e gerenciar sonhos.
+API REST desenvolvida em ASP.NET Core para registrar, consultar, atualizar e excluir sonhos.
 
-O projeto foi criado com foco em aprendizado progressivo de desenvolvimento backend utilizando C#, ASP.NET Core e arquitetura em camadas.
-
----
-
-## Objetivo
-
-Permitir o registro, consulta, atualização e remoção de sonhos através de endpoints HTTP.
-
-Cada sonho contém:
-
-- Id
-- Título
-- Descrição
-- Data
-- Nível de Lucidez (1 a 10)
+Este projeto está sendo desenvolvido como parte do meu processo de aprendizagem em desenvolvimento Backend com C# e .NET. A proposta é evoluir uma API simples até uma arquitetura próxima à encontrada em aplicações profissionais, implementando novos conceitos de forma incremental e compreendendo o motivo da existência de cada um deles.
 
 ---
 
-## Tecnologias Utilizadas
+# Objetivo
+
+Construir uma API REST seguindo boas práticas de arquitetura, utilizando ASP.NET Core e evoluindo progressivamente para tecnologias e padrões utilizados no mercado.
+
+---
+
+# Tecnologias Utilizadas
 
 - C#
-- ASP.NET Core Web API
 - .NET
+- ASP.NET Core Web API
+- JSON
 - Dependency Injection
-- Arquitetura em Camadas
-- Git e GitHub
+- Git
+- GitHub
 
 ---
 
-## Estrutura do Projeto
+# Estrutura Atual
 
-```txt
+```text
 Dream Journal API
 │
 ├── Controllers
-│   └── DreamController.cs
+│
+├── Data
+│   └── JsonDatabase.cs
 │
 ├── Models
-│   └── Dream.cs
 │
 ├── Services
-│   └── DreamService.cs
 │
 └── Program.cs
 ```
 
 ---
 
-## Arquitetura
+# Arquitetura
 
-### Models
+## Models
 
-Responsáveis por representar os dados da aplicação.
+Representam as entidades da aplicação.
 
-Atualmente existe o modelo:
+Atualmente:
 
-```csharp
-Dream
-```
-
-Com as propriedades:
-
-- Id
-- Title
-- Description
-- Date
-- LucidityLevel
+- Dream
 
 ---
 
-### Services
+## Services
 
-Responsáveis pelas regras de negócio da aplicação.
+Responsáveis pelas regras de negócio.
 
-O `DreamService` implementa:
+O DreamService realiza:
 
-- AddDream()
-- GetAllDreams()
-- GetDreamById()
-- UpdateDream()
-- DeleteDream()
-- ValidateDream()
-
-Também é responsável por:
-
-- Gerar IDs automaticamente
-- Validar dados recebidos
-- Garantir que o nível de lucidez esteja entre 1 e 10
-- Centralizar a lógica da aplicação
+- Cadastro
+- Consulta
+- Atualização
+- Exclusão
+- Validação dos dados
+- Controle do próximo ID
+- Comunicação com a camada de persistência
 
 ---
 
-### Controllers
+## Data
 
-Responsáveis por receber requisições HTTP e retornar respostas apropriadas.
+A camada Data é responsável exclusivamente pela persistência dos dados.
+
+Atualmente contém:
+
+- JsonDatabase
+
+Essa classe:
+
+- Salva listas em arquivos JSON
+- Carrega listas de arquivos JSON
+- Não conhece regras de negócio
+- Não conhece a entidade Dream
+- Pode ser reutilizada para qualquer lista através de Generics
+
+---
+
+## Controllers
+
+Recebem as requisições HTTP e retornam as respostas da API.
 
 Endpoints disponíveis:
 
@@ -108,201 +103,197 @@ PUT     /api/dream/{id}
 DELETE  /api/dream/{id}
 ```
 
-O Controller não contém regras de negócio.
+---
 
-Sua função é:
+## Program.cs
 
-- Receber a requisição
-- Chamar o Service adequado
-- Retornar respostas HTTP corretas
+Responsável pela configuração da aplicação.
+
+Atualmente realiza:
+
+- Registro do JsonDatabase
+- Registro do DreamService
+- Injeção de Dependência
+- Configuração dos Controllers
+- Inicialização da API
 
 ---
 
-### Program.cs
+# Conceitos Aplicados
 
-Responsável por iniciar a aplicação.
-
-Também realiza:
-
-- Registro dos serviços
-- Configuração da injeção de dependência
-- Mapeamento dos controllers
-- Configuração do pipeline HTTP
-
----
-
-## Conceitos Aplicados
-
-Durante o desenvolvimento deste projeto foram praticados os seguintes conceitos:
+Até o momento este projeto utiliza:
 
 - CRUD
-- APIs REST
+- ASP.NET Core Web API
+- REST
 - Controllers
 - Services
 - Models
 - Dependency Injection
-- Arquitetura em Camadas
+- Separação de Responsabilidades
+- Persistência em JSON
+- Generics
 - Serialização JSON
-- Tratamento de Exceções
 - Validação de Regras de Negócio
 - Status Codes HTTP
 
 ---
 
-## Funcionalidades Implementadas
+# Funcionalidades
 
-### Cadastro de Sonhos
+## Cadastro
 
-Permite registrar um novo sonho contendo:
+Permite registrar novos sonhos.
 
-- Título
-- Descrição
-- Data
-- Nível de Lucidez
+Cada sonho possui:
+
+- Id
+- Title
+- Description
+- Date
+- LucidityLevel
 
 ---
 
-### Consulta de Sonhos
+## Consulta
 
 Permite:
 
-- Consultar todos os sonhos cadastrados
-- Consultar um sonho específico por ID
+- Listar todos os sonhos
+- Buscar um sonho por ID
 
 ---
 
-### Atualização de Sonhos
+## Atualização
 
-Permite alterar informações de um sonho já existente.
-
----
-
-### Exclusão de Sonhos
-
-Permite remover sonhos utilizando seu ID.
+Permite alterar todas as informações de um sonho existente.
 
 ---
 
-### Validações
+## Exclusão
 
-A aplicação atualmente valida:
+Permite remover um sonho através do seu ID.
+
+---
+
+## Validação
+
+A aplicação valida:
 
 - Título obrigatório
 - Descrição obrigatória
-- Nível de Lucidez entre 1 e 10
-
-Caso alguma regra seja violada, a API retorna:
-
-```http
-400 Bad Request
-```
+- Nível de lucidez entre 1 e 10
 
 ---
 
-## Testes Realizados
+# Evolução do Projeto
 
-Durante a V1 foram testados os seguintes cenários:
-
-### Cenários de Sucesso
-
-- Cadastro de sonho
-- Consulta de todos os sonhos
-- Consulta por ID
-- Atualização de sonho
-- Exclusão de sonho
-
-### Cenários de Falha
-
-- Busca de ID inexistente
-- Nível de lucidez fora do intervalo permitido
-- Dados inválidos enviados para a API
-
-Respostas HTTP verificadas:
-
-- 200 OK
-- 201 Created
-- 204 No Content
-- 400 Bad Request
-- 404 Not Found
-
----
-
-## Status Atual
-
-### V1 - CRUD em Memória ✅
+## ✅ V1 — CRUD em Memória
 
 Implementado:
 
-- Estrutura completa da API
-- CRUD funcional
+- Estrutura inicial da API
+- CRUD completo
+- Controllers
+- Services
+- Validações
 - Injeção de Dependência
-- Validações de negócio
-- Geração automática de IDs
-- Testes manuais dos endpoints
+- IDs automáticos
 
-Limitação atual:
+Limitação:
 
-Os dados são armazenados apenas em memória e são perdidos quando a aplicação é encerrada.
+Os dados existiam apenas durante a execução da aplicação.
 
 ---
 
-## Roadmap
+## ✅ V2 — Persistência em JSON
 
-### V2 - Persistência em JSON
+Implementado:
 
-Objetivos:
+- Camada Data
+- JsonDatabase genérico
+- Persistência em arquivo JSON
+- Carregamento automático dos sonhos ao iniciar a aplicação
+- Recuperação automática do próximo ID
+- Separação entre regras de negócio e persistência
+- Injeção de Dependência do JsonDatabase
 
-- Salvar sonhos em arquivo JSON
-- Carregar dados automaticamente ao iniciar a aplicação
-- Manter informações entre execuções
-
----
-
-### V3 - Swagger / OpenAPI
-
-Objetivos:
-
-- Documentação automática dos endpoints
-- Interface gráfica para testes
-- Melhor experiência de desenvolvimento
+Agora os sonhos permanecem salvos mesmo após reiniciar a aplicação.
 
 ---
 
-### V4 - SQLite
+# Próximas Versões
 
-Objetivos:
+## 🔄 V3
 
-- Substituir armazenamento em memória
-- Persistência em banco de dados relacional
+Swagger / OpenAPI
+
+- Documentação automática
+- Interface gráfica para testes da API
 
 ---
 
-### V5 - Entity Framework Core
+## 🔄 V4
 
-Objetivos:
+SQLite + Entity Framework Core
 
-- Utilizar ORM
+- Persistência em banco de dados
 - Migrations
-- Contexto de banco de dados
-- Consultas mais robustas
+- DbContext
 
 ---
 
-## Aprendizados Obtidos na V1
+## 🔄 V5
 
-Este projeto foi utilizado para praticar:
+Refatoração Arquitetural
 
-- Construção de APIs REST com ASP.NET Core
-- Separação de responsabilidades
-- Injeção de dependência
-- Fluxo Controller → Service → Model
-- Criação de endpoints HTTP
-- Tratamento de erros
-- Retorno de respostas apropriadas
-- Estruturação de aplicações backend
+- Repository Pattern
+- IDreamRepository
+- DreamRepository
+- DTOs
+- Logging
+- Tratamento Global de Exceções
+
+---
+
+## 🔄 V6
+
+Testes Unitários
+
+- xUnit
+- Mocking
+- Testes da camada de negócio
+
+---
+
+## 🔄 V7
+
+Autenticação
+
+- JWT
+- Authorization
+- Proteção dos endpoints
+
+---
+
+## 🔄 V8
+
+Deploy
+
+- Publicação da API
+- Docker (opcional)
+- Introdução a CI/CD
+
+---
+
+# Objetivo de Aprendizado
+
+Mais do que desenvolver uma API funcional, este projeto busca compreender profundamente os conceitos utilizados em aplicações profissionais .NET.
+
+Cada versão introduz novos recursos apenas quando existe uma necessidade arquitetural real, permitindo que a evolução da aplicação aconteça de forma semelhante ao ciclo de desenvolvimento encontrado em projetos reais.
 
 ---
 
 ## Autor
 
-Projeto desenvolvido por mim como parte da minha jornada de aprendizado em C# e desenvolvimento backend utilizando ASP.NET Core.
+Projeto desenvolvido por **Filipe** como parte da jornada de estudos em C# e Desenvolvimento Backend com ASP.NET Core.
